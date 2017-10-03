@@ -126,6 +126,11 @@ AC_ARG_ENABLE(install-test-programs,
 		  [Install test programs (default: no)]),
 		  [INSTALL_TESTS=$enableval], [INSTALL_TESTS=no])
 
+AC_ARG_ENABLE(drm_fe,
+	      AS_HELP_STRING([--enable-drm_fe],
+	      [Enable support for the DRM front-end (default: disabled)]),
+	      [DRM_FE=$enableval], [DRM_FE=auto])
+
 dnl ===========================================================================
 dnl check compiler flags
 AC_DEFUN([LIBDRM_CC_TRY_FLAG], [
@@ -151,6 +156,10 @@ AC_CHECK_FUNCS([clock_gettime], [CLOCK_LIB=],
                [AC_CHECK_LIB([rt], [clock_gettime], [CLOCK_LIB=-lrt],
                              [AC_MSG_ERROR([Couldn't find clock_gettime])])])
 AC_SUBST([CLOCK_LIB])
+
+AC_CHECK_FUNC([dlopen], [],
+              AC_CHECK_LIB([dl], [dlopen], DLOPEN_LIBS="-ldl"))
+AC_SUBST(DLOPEN_LIBS)
 
 AC_CHECK_FUNCS([open_memstream], [HAVE_OPEN_MEMSTREAM=yes])
 
@@ -358,6 +367,11 @@ if test "x$INSTALL_TESTS" = xyes; then
 	AC_DEFINE(HAVE_INSTALL_TESTS, 1, [Install test programs])
 fi
 
+AM_CONDITIONAL(HAVE_DRM_FE, [test "x$DRM_FE" = xyes])
+if test "x$DRM_FE" = xyes; then
+        AC_DEFINE(HAVE_DRM_FE, 1, [Have DRM front-end support])
+fi
+
 AC_ARG_ENABLE([cairo-tests],
               [AS_HELP_STRING([--enable-cairo-tests],
                               [Enable support for Cairo rendering in tests (default: auto)])],
@@ -482,4 +496,5 @@ echo "  OMAP API       $OMAP"
 echo "  EXYNOS API     $EXYNOS"
 echo "  Freedreno API  $FREEDRENO (kgsl: $FREEDRENO_KGSL)"
 echo "  Tegra API      $TEGRA"
+echo "  drm_fe API     $DRM_FE"
 echo ""

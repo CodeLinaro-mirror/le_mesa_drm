@@ -63,6 +63,9 @@
 
 #include "xf86drm.h"
 #include "libdrm_macros.h"
+#ifdef DRM_FE
+#include "fe_drm.h"
+#endif
 
 #if defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__DragonFly__)
 #define DRM_MAJOR 145

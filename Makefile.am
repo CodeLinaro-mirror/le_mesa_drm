@@ -36,7 +36,8 @@ AM_DISTCHECK_CONFIGURE_FLAGS = \
 	--enable-tegra-experimental-api \
 	--enable-install-test-programs \
 	--enable-cairo-tests \
-	--enable-manpages
+	--enable-manpages \
+	--enable-drm_fe
 
 pkgconfigdir = @pkgconfigdir@
 pkgconfig_DATA = libdrm.pc
@@ -96,11 +97,19 @@ libdrm_la_LTLIBRARIES = libdrm.la
 libdrm_ladir = $(libdir)
 libdrm_la_LDFLAGS = -version-number 2:4:0 -no-undefined
 libdrm_la_LIBADD = @CLOCK_LIB@
+if HAVE_DRM_FE
+libdrm_la_LIBADD += @DLOPEN_LIBS@
+endif
 
 libdrm_la_CPPFLAGS = -I$(top_srcdir)/include/drm
 AM_CFLAGS = \
 	$(WARN_CFLAGS) \
 	$(VALGRIND_CFLAGS)
+if HAVE_DRM_FE
+AM_CFLAGS += \
+        -DLIBDIR='"$(libdir)"' \
+        -DDRM_FE
+endif
 
 libdrm_la_SOURCES = $(LIBDRM_FILES)
 

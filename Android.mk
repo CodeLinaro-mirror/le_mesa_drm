@@ -27,6 +27,13 @@ include $(CLEAR_VARS)
 # Import variables LIBDRM_{,H_,INCLUDE_H_,INCLUDE_VMWGFX_H_}FILES
 include $(LOCAL_PATH)/Makefile.sources
 
+
+ifeq ($(ENABLE_HYP),true)
+common_CFLAGS += \
+	-DDRM_FE \
+	-DLIBDIR='"/vendor/lib64"'
+endif
+
 LOCAL_MODULE := libdrm
 LOCAL_MODULE_TAGS := optional
 
